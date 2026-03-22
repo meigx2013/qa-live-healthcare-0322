@@ -12,6 +12,83 @@ QA Service User 是医疗问答系统的用户管理服务，基于 Spring Boot 
 
 ## API 端点列表
 
+### DoctorUserController
+
+**文件位置：** [../src/main/java/com/leansofx/qaserviceuser/controller/DoctorUserController.java]
+
+医生用户管理控制器，提供医生信息的增删改查功能。
+
+| 方法 | 端点 | 描述 | 参数 | 请求体 | 响应 |
+|--------|----------|-------------|------------|--------------|----------|
+| GET | `/api/doctors` | 获取所有医生列表 | 无 | 无 | List<DoctorUserResponse> |
+| GET | `/api/doctors/{id}` | 根据ID获取医生信息 | id (路径参数) | 无 | DoctorUserResponse |
+| GET | `/api/doctors/username/{username}` | 根据用户名获取医生信息 | username (路径参数) | 无 | DoctorUserResponse |
+| GET | `/api/doctors/active` | 获取所有激活的医生列表 | 无 | 无 | List<DoctorUserResponse> |
+| POST | `/api/doctors` | 创建医生 | 无 | DoctorUserRequest | DoctorUserResponse |
+| PUT | `/api/doctors/{id}` | 更新医生信息 | id (路径参数) | DoctorUserRequest | DoctorUserResponse |
+| DELETE | `/api/doctors/{id}` | 删除医生 | id (路径参数) | 无 | 无内容 |
+
+#### 数据结构示例
+
+**DoctorUserRequest（医生创建/更新请求）**
+```json
+{
+  "id": "doctor001",
+  "username": "dr_zhang",
+  "password": "securePassword123",
+  "name": "张医生",
+  "title": "主任医师",
+  "department": "内科",
+  "avatar": "https://example.com/avatars/dr_zhang.jpg",
+  "experience": "20年临床经验",
+  "specialties": ["心血管疾病", "高血压", "糖尿病"],
+  "isActive": true
+}
+```
+
+**DoctorUserResponse（医生信息响应）**
+```json
+{
+  "id": "doctor001",
+  "username": "dr_zhang",
+  "name": "张医生",
+  "title": "主任医师",
+  "department": "内科",
+  "avatar": "https://example.com/avatars/dr_zhang.jpg",
+  "experience": "20年临床经验",
+  "specialties": ["心血管疾病", "高血压", "糖尿病"],
+  "isActive": true
+}
+```
+
+**医生列表响应示例（List<DoctorUserResponse>）**
+```json
+[
+  {
+    "id": "doctor001",
+    "username": "dr_zhang",
+    "name": "张医生",
+    "title": "主任医师",
+    "department": "内科",
+    "avatar": "https://example.com/avatars/dr_zhang.jpg",
+    "experience": "20年临床经验",
+    "specialties": ["心血管疾病", "高血压", "糖尿病"],
+    "isActive": true
+  },
+  {
+    "id": "doctor002",
+    "username": "dr_li",
+    "name": "李医生",
+    "title": "副主任医师",
+    "department": "外科",
+    "avatar": "https://example.com/avatars/dr_li.jpg",
+    "experience": "15年临床经验",
+    "specialties": ["骨科手术", "创伤治疗"],
+    "isActive": true
+  }
+]
+```
+
 ### TestController
 
 **文件位置：** [../src/main/java/com/leansofx/qaserviceuser/controller/TestController.java](../src/main/java/com/leansofx/qaserviceuser/controller/TestController.java)
@@ -139,6 +216,65 @@ QA Service User 是医疗问答系统的用户管理服务，基于 Spring Boot 
 
 ## 使用示例
 
+### 医生管理接口示例
+
+**获取所有医生列表：**
+```bash
+curl -X GET http://localhost:8080/api/doctors
+```
+
+**根据ID获取医生信息：**
+```bash
+curl -X GET http://localhost:8080/api/doctors/doctor001
+```
+
+**根据用户名获取医生信息：**
+```bash
+curl -X GET http://localhost:8080/api/doctors/username/dr_zhang
+```
+
+**获取所有激活的医生列表：**
+```bash
+curl -X GET http://localhost:8080/api/doctors/active
+```
+
+**创建医生：**
+```bash
+curl -X POST http://localhost:8080/api/doctors \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id": "doctor003",
+    "username": "dr_wang",
+    "password": "securePassword456",
+    "name": "王医生",
+    "title": "主治医师",
+    "department": "儿科",
+    "avatar": "https://example.com/avatars/dr_wang.jpg",
+    "experience": "10年临床经验",
+    "specialties": ["儿童常见病", "新生儿护理"],
+    "isActive": true
+  }'
+```
+
+**更新医生信息：**
+```bash
+curl -X PUT http://localhost:8080/api/doctors/doctor003 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "王医生",
+    "title": "副主任医师",
+    "department": "儿科",
+    "experience": "12年临床经验",
+    "specialties": ["儿童常见病", "新生儿护理", "儿童保健"],
+    "isActive": true
+  }'
+```
+
+**删除医生：**
+```bash
+curl -X DELETE http://localhost:8080/api/doctors/doctor003
+```
+
 ### 测试 CORS 配置
 
 **GET 请求示例：**
@@ -160,11 +296,17 @@ curl -X GET http://localhost:8080/actuator/health
 
 ## 注意事项
 
-1. 当前项目处于开发阶段，仅包含测试端点
+1. 医生管理接口提供完整的CRUD功能
 2. 所有 API 端点都支持 CORS
 3. Actuator 端点提供了丰富的监控和管理功能
 4. 建议在生产环境中限制 CORS 配置和 Actuator 端点的访问权限
+5. 创建和更新医生信息时，密码字段建议进行加密处理
+6. DoctorUserResponse 中不包含密码字段，确保敏感信息安全
 
 ## 版本历史
 
-- **v0.0.1-SNAPSHOT**：初始版本，包含基础的 CORS 测试功能和 Actuator 监控
+- **v0.0.1-SNAPSHOT**：
+  - 初始版本，包含基础的 CORS 测试功能和 Actuator 监控
+  - 新增医生用户管理功能，提供完整的 CRUD 接口
+  - 支持按ID、用户名查询医生信息
+  - 支持查询激活状态的医生列表
