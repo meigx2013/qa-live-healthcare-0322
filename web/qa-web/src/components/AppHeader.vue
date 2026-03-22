@@ -10,25 +10,41 @@
       <a-menu v-model:selectedKeys="selectedKeys" mode="horizontal" class="nav-menu desktop-menu">
         <a-menu-item key="home" @click="navigateTo('/')">
           <HomeOutlined />
-          首页
+          {{ t('header.home') }}
         </a-menu-item>
         <a-menu-item key="consultation" @click="navigateTo('/consultation')">
           <MessageOutlined />
-          问诊
+          {{ t('header.consultation') }}
         </a-menu-item>
         <a-menu-item key="doctors" @click="navigateTo('/doctors')">
           <TeamOutlined />
-          医生
+          {{ t('header.doctors') }}
         </a-menu-item>
         <a-menu-item key="about" @click="navigateTo('/about')">
           <InfoCircleOutlined />
-          关于
+          {{ t('header.about') }}
         </a-menu-item>
       </a-menu>
-      <a-button type="primary" class="login-btn desktop-login" @click="navigateTo('/doctor/login')">
-        <UserOutlined />
-        医生登录
-      </a-button>
+      
+      <!-- 语言切换和登录按钮 -->
+      <div class="desktop-actions">
+        <a-dropdown class="lang-dropdown desktop-login">
+          <a-button type="text" class="lang-btn">
+            {{ currentLangLabel }}
+          </a-button>
+          <template #overlay>
+            <a-menu @click="handleLanguageChange">
+              <a-menu-item key="zh-cn">中文</a-menu-item>
+              <a-menu-item key="en-us">English</a-menu-item>
+            </a-menu>
+          </template>
+        </a-dropdown>
+        
+        <a-button type="primary" class="login-btn desktop-login" @click="navigateTo('/doctor/login')">
+          <UserOutlined />
+          {{ t('header.doctorLogin') }}
+        </a-button>
+      </div>
       
       <!-- 移动端汉堡包菜单按钮 -->
       <a-button class="mobile-menu-btn" type="text" @click="mobileMenuVisible = true">
@@ -45,7 +61,7 @@
       width="280"
     >
       <div class="drawer-header">
-        <span class="drawer-title">菜单</span>
+        <span class="drawer-title">{{ t('header.menu') }}</span>
         <a-button type="text" class="close-btn" @click="mobileMenuVisible = false">
           <CloseOutlined />
         </a-button>
@@ -54,26 +70,35 @@
       <div class="drawer-menu">
         <div class="menu-item" @click="handleMenuClick('/')">
           <HomeOutlined />
-          <span>首页</span>
+          <span>{{ t('header.home') }}</span>
         </div>
         <div class="menu-item" @click="handleMenuClick('/consultation')">
           <MessageOutlined />
-          <span>问诊</span>
+          <span>{{ t('header.consultation') }}</span>
         </div>
         <div class="menu-item" @click="handleMenuClick('/doctors')">
           <TeamOutlined />
-          <span>医生</span>
+          <span>{{ t('header.doctors') }}</span>
         </div>
         <div class="menu-item" @click="handleMenuClick('/about')">
           <InfoCircleOutlined />
-          <span>关于</span>
+          <span>{{ t('header.about') }}</span>
         </div>
         
         <a-divider />
         
+        <div class="mobile-lang-switcher">
+          <a-button :type="locale === 'zh-cn' ? 'primary' : 'default'" @click="changeLanguage('zh-cn')">
+            中文
+          </a-button>
+          <a-button :type="locale === 'en-us' ? 'primary' : 'default'" @click="changeLanguage('en-us')">
+            English
+          </a-button>
+        </div>
+        
         <a-button type="primary" class="mobile-login-btn" @click="handleMenuClick('/doctor/login')">
           <UserOutlined />
-          医生登录
+          {{ t('header.doctorLogin') }}
         </a-button>
       </div>
     </a-drawer>
@@ -81,14 +106,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { HomeOutlined, MessageOutlined, TeamOutlined, InfoCircleOutlined, UserOutlined, MenuOutlined, CloseOutlined } from '@ant-design/icons-vue';
 
 const router = useRouter();
 const route = useRoute();
+const { t, locale } = useI18n();
 const selectedKeys = ref<string[]>(['home']);
 const mobileMenuVisible = ref(false);
+
+const currentLangLabel = computed(() => {
+  return locale.value === 'zh-cn' ? '中文' : 'English';
+});
 
 watch(() => route.path, (newPath) => {
   if (newPath === '/') {
@@ -109,6 +140,16 @@ const navigateTo = (path: string) => {
 const handleMenuClick = (path: string) => {
   mobileMenuVisible.value = false;
   navigateTo(path);
+};
+
+const handleLanguageChange = (e: any) => {
+  const lang = e.key;
+  changeLanguage(lang);
+};
+
+const changeLanguage = (lang: string) => {
+  locale.value = lang;
+  localStorage.setItem('locale', lang);
 };
 </script>
 
@@ -161,6 +202,25 @@ const handleMenuClick = (path: string) => {
   border: none;
   margin: 0 40px;
   line-height: 64px;
+}
+
+.desktop-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.lang-dropdown {
+  margin-right: 8px;
+}
+
+.lang-btn {
+  color: #333;
+  font-size: 14px;
+}
+
+.lang-btn:hover {
+  color: #1890ff;
 }
 
 .login-btn {
@@ -227,6 +287,17 @@ const handleMenuClick = (path: string) => {
   border-bottom: none;
 }
 
+.mobile-lang-switcher {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 0 8px;
+}
+
+.mobile-lang-switcher button {
+  flex: 1;
+}
+
 .mobile-login-btn {
   width: 100%;
   background: #52c41a;
@@ -243,7 +314,7 @@ const handleMenuClick = (path: string) => {
 /* iPad及以下设备 (宽度 <= 1024px) */
 @media (max-width: 1024px) {
   .desktop-menu,
-  .desktop-login {
+  .desktop-actions {
     display: none;
   }
   
@@ -290,7 +361,7 @@ const handleMenuClick = (path: string) => {
   }
   
   .desktop-menu,
-  .desktop-login {
+  .desktop-actions {
     display: flex;
   }
 }
