@@ -11,9 +11,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class DatabaseConnectionTest {
 
-    private static final String URL = "jdbc:mysql://localhost:19306/healthcare_mysql";
+    private static final String URL = "jdbc:mysql://localhost:3301/healthcare?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8&allowPublicKeyRetrieval=true";
     private static final String USERNAME = "root";
-    private static final String PASSWORD = "asdm#2026";
+    private static final String PASSWORD = "root123";
 
     @Test
     void testDatabaseConnection() {

@@ -1,0 +1,50 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: healthcare_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: healthcare
+      MYSQL_USER: user
+      MYSQL_PASSWORD: healthcare123
+    ports:
+      - "3301:3306"
+    volumes:
+      - healthcare_mysql_data:/var/lib/mysql
+    command: 
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --init-connect=SET NAMES utf8mb4
+    networks:
+      - healthcare_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: healthcare_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      MYSQL_CHARSET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_unicode_ci
+    ports:
+      - "8001:80"
+    networks:
+      - healthcare_network
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  healthcare_mysql_data:
+    driver: local
+
+networks:
+  healthcare_network:
+    driver: bridge
