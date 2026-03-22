@@ -6,11 +6,11 @@
   "scripts": {
     "dev": "concurrently \"npm run dev:web\" \"npm run dev:user\" \"npm run dev:question\"",
     "dev:web": "cd web/qa-web && npm run dev",
-    "dev:user": "cd server/qa-service-user && ./mvnw spring-boot:run",
-    "dev:question": "cd server/qa-service-question && ./mvnw spring-boot:run",
+    "dev:user": "cd server/qa-service-user && mvnw.cmd spring-boot:run",
+    "dev:question": "cd server/qa-service-question && mvnw.cmd spring-boot:run",
     "dev:server": "concurrently \"npm run dev:user\" \"npm run dev:question\"",
-    "dev:server:user": "cd server/qa-service-user && ./mvnw spring-boot:run",
-    "dev:server:question": "cd server/qa-service-question && ./mvnw spring-boot:run",
+    "dev:server:user": "cd server/qa-service-user && mvnw.cmd spring-boot:run",
+    "dev:server:question": "cd server/qa-service-question && mvnw.cmd spring-boot:run",
     "build": "npm run build:web",
     "build:web": "cd web/qa-web && npm run build",
     "install:all": "npm run install:web",
@@ -18,8 +18,8 @@
     "clean": "npm run clean:web && npm run clean:server",
     "clean:web": "cd web/qa-web && rm -rf node_modules dist",
     "clean:server": "npm run clean:server:user && npm run clean:server:question",
-    "clean:server:user": "cd server/qa-service-user && ./mvnw clean",
-    "clean:server:question": "cd server/qa-service-question && ./mvnw clean"
+    "clean:server:user": "cd server/qa-service-user && mvnw.cmd clean",
+    "clean:server:question": "cd server/qa-service-question && mvnw.cmd clean"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

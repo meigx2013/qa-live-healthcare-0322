@@ -66,18 +66,18 @@ qa-service-user/
 
 ## 应用管理脚本
 
-项目提供了完整的应用生命周期管理脚本，位于项目根目录下：
+项目提供了完整的应用生命周期管理脚本，位于项目根目录下，支持 Linux/macOS 和 Windows 系统：
 
 ### 脚本列表
 
-| 脚本文件 | 功能描述 | 使用方法 |
-|---------|---------|---------|
-| `start.sh` | 启动应用服务 | `./start.sh` |
-| `stop.sh` | 停止应用服务 | `./stop.sh` |
-| `restart.sh` | 重启应用服务 | `./restart.sh` |
-| `status.sh` | 查看应用状态 | `./status.sh` |
+| 脚本文件 | 功能描述 | Linux/macOS | Windows |
+|---------|---------|-------------|---------|
+| 启动应用 | 启动 Spring Boot 应用 | `./start.sh` | `start.cmd` |
+| 停止应用 | 停止正在运行的应用 | `./stop.sh` | `stop.cmd` |
+| 重启应用 | 重启应用服务 | `./restart.sh` | `restart.cmd` |
+| 查看状态 | 查看应用运行状态 | `./status.sh` | `status.cmd` |
 
-### 脚本详细说明
+### Shell 脚本详细说明 (Linux/macOS)
 
 #### start.sh
 - **功能**: 启动 Spring Boot 应用
@@ -135,6 +135,65 @@ qa-service-user/
 - 使用前确保已执行 `mvn clean package` 构建项目
 - 脚本会自动处理 PID 文件和日志目录
 - 所有脚本都包含错误处理和状态检查
+
+### CMD 脚本详细说明 (Windows)
+
+#### start.cmd
+- **功能**: 启动 Spring Boot 应用
+- **主要特性**:
+  - 检查应用是否已在运行
+  - 验证 JAR 文件是否存在
+  - 自动创建日志目录
+  - 使用 PowerShell 后台启动应用
+  - 保存进程 PID 到文件
+- **日志文件**: `logs\application.log`
+- **PID 文件**: `qa-service-user.pid`
+
+#### stop.cmd
+- **功能**: 停止正在运行的应用
+- **主要特性**:
+  - 读取 PID 文件获取进程 ID
+  - 优雅终止进程（使用 taskkill）
+  - 等待进程正常结束（最多 10 秒）
+  - 如需要则强制终止（/F 参数）
+  - 清理 PID 文件
+- **超时机制**: 10 秒后自动强制终止
+
+#### restart.cmd
+- **功能**: 重启应用服务
+- **执行流程**:
+  1. 调用 `stop.cmd` 停止当前服务
+  2. 等待 1 秒确保进程完全结束
+  3. 调用 `start.cmd` 启动服务
+
+#### status.cmd
+- **功能**: 检查应用运行状态
+- **输出信息**:
+  - 应用运行状态
+  - 进程 PID
+  - 详细的进程信息
+- **自动清理**: 发现无效 PID 文件时自动删除
+
+### Windows 使用示例
+
+```cmd
+REM 启动应用
+start.cmd
+
+REM 检查状态
+status.cmd
+
+REM 停止应用
+stop.cmd
+
+REM 重启应用
+restart.cmd
+```
+
+### Windows 注意事项
+- 确保系统已安装 PowerShell 5.1 或更高版本
+- 使用前确保已执行 `mvnw.cmd clean package` 构建项目
+- 如遇端口占用，请先停止占用进程或修改端口配置
 
 ## 开发调试
 
