@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "activeWorkspaceId": "2",
+  "toolsetIds": [
+    "context-builder-6",
+    "context-builder-7"
+  ],
+  "specIds": [],
+  "contextIds": [],
+  "workspaces": {
+    "1": {
+      "registryVersion": "snapshot-1.0.0",
+      "toolsetIds": [],
+      "specIds": [],
+      "contextIds": [
+        "1"
+      ],
+      "updatedAt": "2026-04-30T07:19:00.289Z"
+    },
+    "2": {
+      "registryVersion": "snapshot-1.0.0",
+      "toolsetIds": [
+        "context-builder-7"
+      ],
+      "specIds": [],
+      "contextIds": [
+        "1"
+      ],
+      "updatedAt": "2026-04-30T07:27:06.060Z"
+    }
+  }
+}
